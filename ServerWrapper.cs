@@ -60,36 +60,19 @@ namespace Defectively.HorizonServer
                     Url = "https://festival.ml/"
                 }));
 
-                return;
-            }
-
-            if (package.Type == PackageType.Development) {
-                e.Client.Account = new Account {
-                    AresFlags = new AresStorage("*"),
-                    Id = package.GetContent<string>(0),
-                    Name = package.GetContent<string>(1),
-                    TeamId = package.GetContent<string>(2)
-                };
-
-                await e.Client.WriteAsync(new Package(PackageType.Success, e.Client.Account));
-
-                foreach (var extPath in ExtensionManager.Extensions.FindAll(_ => _.CreateClientInstance).Select(_ => _.ExtensionPath).Distinct()) {
-                    await e.Client.WriteAsync(new Package(PackageType.Assembly, File.ReadAllBytes(extPath), new FileInfo(extPath).Name));
-                }
-
-                await Listen(e.Client);
+                Server.DisconnectClient(e.Client);
 
                 return;
             }
 
             try {
-                id = package.GetContent<string>(0);
+                id = package.GetContent<string>();
                 password = package.GetContent<byte[]>(1);
             } catch { }
 
             if (string.IsNullOrEmpty(id) || password?.Length == 0) {
                 await e.Client.WriteAsync(new Package(PackageType.Error, "no_auth_data"));
-                e.Client.Disconnect();
+                Server.DisconnectClient(e.Client);
                 return;
             }
 
@@ -97,13 +80,13 @@ namespace Defectively.HorizonServer
 
             if (account == null) {
                 await e.Client.WriteAsync(new Package(PackageType.Error, "account_unknown"));
-                e.Client.Disconnect();
+                Server.DisconnectClient(e.Client);
                 return;
             }
 
             if (!account.Password.SequenceEqual(password)) {
                 await e.Client.WriteAsync(new Package(PackageType.Error, "password_invalid"));
-                e.Client.Disconnect();
+                Server.DisconnectClient(e.Client);
                 return;
             }
 
@@ -136,7 +119,9 @@ namespace Defectively.HorizonServer
                         break;
                     }
                 }
-            } catch { }
+            } catch {
+                Server.DisconnectClient(client);
+            }
         }
 
         private void OnDisconnected(ConnectableBase sender, DisconnectedEventArgs e) { }
