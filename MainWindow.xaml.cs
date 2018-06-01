@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace Defectively.HorizonServer
 {
@@ -14,6 +15,10 @@ namespace Defectively.HorizonServer
         private async void OnButtonClick(object sender, RoutedEventArgs e) {
             var wrapper = new ServerWrapper();
             await wrapper.Initialize();
+        }
+
+        private void OnClosing(object sender, CancelEventArgs e) {
+            e.Cancel = true;
         }
     }
 }
