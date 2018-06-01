@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        Closing="OnClosing"
         Title="Defectively Horizon Server"
         MinHeight="500"
         Height="500"

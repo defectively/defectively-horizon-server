@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Defectively.Core.Common;
 using Defectively.Core.Communication;
 using Defectively.Core.Extensibility;
@@ -33,9 +34,10 @@ namespace Defectively.HorizonServer
                 ExtensionManager.InitializeExtension(extPath, true);
             }
 
-
-            new Task(async () => { await receiver.ReceiveAsync(); }).Start();
-            await Server.StartAsync(true);
+            try {
+                new Task(async () => { await receiver.ReceiveAsync(); }).Start();
+                await Server.StartAsync(true);
+            } catch { }
         }
 
         private void OnUdpMessageReceived(UdpReceiver sender, UdpMessageReceivedEventArgs e) {
@@ -120,6 +122,7 @@ namespace Defectively.HorizonServer
                     }
                 }
             } catch {
+                MessageBox.Show("Disconnected");
                 Server.DisconnectClient(client);
             }
         }
