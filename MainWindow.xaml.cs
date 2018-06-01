@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace Defectively.HorizonServer
@@ -17,10 +18,10 @@ namespace Defectively.HorizonServer
         }
 
         private void OnClosing(object sender, CancelEventArgs e) {
-            //e.Cancel = true;
+            e.Cancel = true;
             wrapper.Server.Stop();
             wrapper.Server.Dispose();
-
+            Environment.Exit(0);
         }
     }
 }
